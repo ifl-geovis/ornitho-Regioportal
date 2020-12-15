@@ -1,0 +1,187 @@
+/* rem is default value of 16px
+rem is based on the font-size of the :root node,
+make the apparent size of 1rem equal to 10px - for that is 10/16 which is 0.625, or 62.5%. */
+:root {
+  height: 100%;
+  font-size: 62.5%;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Body font size 16px */
+  font-size: 1.6rem;
+  background-color: #b7bfe3;
+}
+
+.container {
+  width: 84%;
+  margin: 0 auto;
+  background-color: #f0f0f0;
+  /* overrides the bootstrap container properties */
+  padding: unset;
+}
+
+.responsive {
+  width: 100%;
+  height: auto;
+}
+
+.footer {
+  align-items: center;
+  text-align:center;
+  width: 100%;
+  height: 20px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.partner{
+  display: table;
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 50px;
+  text-align: center;
+  /* vertical-align: middle; */
+}
+
+.prow {
+  display: table-row;
+  clear: both;
+}
+.pcol {
+  float: left;
+  display: table-column;
+  width: 100%;
+}
+
+.pcol img{
+  margin: 2%;
+  vertical-align: middle;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+.main, .impr {
+  padding: 0.5% 2%;
+}
+
+.impr_header{
+  margin-top: 3rem;
+  font-size: 2rem;
+}
+
+.impr p img{
+  width:9rem;
+  vertical-align:bottom;
+}
+
+.main p:nth-child(2), .main p:nth-child(3), .main p:nth-child(4), .impr p {
+  line-height: 22px;
+}
+
+.main p:nth-child(3) a, .main p:nth-child(4) a{
+  color: red;
+}
+
+.main p:nth-child(6) {
+  margin-top: 4%;
+  text-align:center;
+}
+
+.main p:nth-child(6) a {
+  margin-right: 4%;
+  margin-left: 4%;
+}
+
+.button {
+  background-color: #a9a9a9;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  border-radius: 6px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1.6rem;
+}
+
+#github{
+  margin: 1rem;
+}
+
+/* custom table of contents container, formats it into a box */
+#toc {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 20px;
+  display: table;
+  font-size: 85%;
+  margin-bottom: 1rem;
+  padding: 40px;
+  margin: 10px;
+  width: auto;
+  float: left;
+  line-height: 22px;
+}
+
+/* enables automatic enumeration for list items outside of the toc box, but disables any icons */
+#toc li, #toc ul, #toc ul li {
+  list-style: inside none decimal !important;
+}
+
+#toc a {
+  color: #a9a9a9;
+  text-decoration: none;
+}
+
+/* this is a wrapper for the tutorial video iframes;
+centers the iframe inside the parenting container */
+.tutorial-vid {
+  position: relative;
+  overflow: hidden;
+  padding-top: 56.25%;
+}
+
+/* let the iframe fill the whole container (see above) */
+.tutorial-vid iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.tutorial-text {
+  margin: 20px 0px;
+  /* to make line height same as in <p> tags on index page */
+  line-height: 22px;
+}
+
+.faq-header{
+  padding-top: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.faq-text {
+  padding-top: 10px;
+  display: none;
+}
+
+.show {
+  display: block;
+}
+
+/*custom css grid layout*/
+@media (min-width: 30em) {
+  .column-grid {
+    background-color: transparent;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+  }
+}

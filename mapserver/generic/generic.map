@@ -1,0 +1,415 @@
+MAP
+  NAME "mapOrnitho"
+  #CONFIG "MS_ERRORFILE" "/mapserver/log/ms_error.txt"
+  #DEBUG 5
+  SIZE 768 1024
+  UNITS meters
+  SHAPEPATH "/mapserver/data/"
+
+  #SYMBOLSET symbolset.txt
+  FONTSET "../fonts/fonts.list"
+
+  #germany
+  #EXTENT 5.98865807458 47.3024876979 15.0169958839 54.983104153
+  EXTENT 661802.8576132225571200 5986275.1113213673233986 1674450.1687172991223633 7406980.8080986468121409
+
+  # Map output projection--MapServer will render the maps in this projection
+  PROJECTION
+    'init=epsg:3857'
+  END
+
+  # Background color for the map canvas
+  IMAGECOLOR 240 240 240
+  IMAGEQUALITY 80
+  IMAGETYPE PNG
+
+	WEB
+    IMAGEPATH '/tmp/'
+    IMAGEURL '/tmp/'
+    METADATA
+      'ows_title'           'WMS OrnithoDB Server'
+      'ows_srs'             'EPSG:3857 EPSG:4326 EPSG:900913'
+      'wms_feature_info_mime_type' 'text/html'
+      'ows_enable_request'   '*'
+    END
+  END
+
+  LAYER
+    NAME "admin_districts_germany"
+    METADATA
+      "wms_title" "District boundaries of Germany"
+    END
+    TYPE POLYGON
+    # projection--this is the native projection of the dataset.
+    PROJECTION
+      "init=epsg:4326"
+    END
+    CONNECTIONTYPE POSTGIS
+    CONNECTION "host=db port=5432 dbname=regioportal user=regioportal password=xxx"
+    PROCESSING "CLOSE_CONNECTION=DEFER"
+    DATA "geom FROM (
+      SELECT
+        row_number() over (ORDER BY govlevel_id) as id,
+        govlevel_id as lid,
+        geom as geom
+      FROM
+        ref_govlevel) as query using unique id using srid=4326"
+    STATUS OFF
+    FILTER ('[lid]' = '%lid%')
+    #FILTER (('[lid]' = '2000') or ('[lid]' = '%lid%'))
+    VALIDATION
+      'lid' '^[0-9]{1,6}$'
+    END
+    CLASS
+      NAME "admin_germany"
+      STYLE
+        #COLOR 225 225 225
+        OUTLINECOLOR 160 82 45
+        WIDTH 4
+      END
+    END #Class
+  END #Layer
+
+  LAYER
+    NAME "natura_2000"
+    METADATA
+      "wms_title" "Natura 2000 SPA sites of Germany"
+    END
+    DATA "Natura2000_end2018_3857_sitetypeAC"
+    STATUS OFF
+    TYPE POLYGON
+    LABELCACHE ON
+    LABELITEM "SITENAME"
+    CLASS
+      NAME "natura_2000"
+      #TEMPLATE "../templates/natura2000.html"
+      STYLE
+        OPACITY 70
+        COLOR 48 154 48
+        OUTLINECOLOR 156 156 156
+        WIDTH 1
+      END
+      LABEL
+        COLOR  0 0 0
+        OUTLINECOLOR 255 255 255
+        BUFFER 4
+        STYLE #defines the shadowbox
+          GEOMTRANSFORM LABELPOLY
+          COLOR 153 153 153
+          OFFSET 3 2
+        END #style
+        STYLE #defines the box behing the label
+         GEOMTRANSFORM LABELPOLY
+         COLOR 255 255 255
+         OUTLINECOLOR 218 218 218
+        END #style
+        FONT "opens"
+        TYPE truetype
+        SIZE 8
+        POSITION AUTO
+        PARTIALS FALSE
+        MAXSCALEDENOM 400000
+      END #Label
+    END #Class
+  END #Layer
+
+  LAYER
+    NAME "grid_tk50"
+    METADATA
+      "wms_title" "Grid TK50"
+    END
+    DATA "ornitho_tk50_3857"
+    STATUS OFF
+    TYPE POLYGON
+    CLASS
+      NAME "tk50"
+      STYLE
+        OUTLINECOLOR 32 32 32
+        WIDTH 2
+      END
+    END #Class
+  END #Layer
+
+  LAYER
+    NAME "grid_tk25"
+    METADATA
+      "wms_title" "Grid TK25"
+    END
+    DATA "ornitho_tk25_3857"
+    STATUS OFF
+    TYPE POLYGON
+    CLASS
+      NAME "tk25"
+      STYLE
+        OUTLINECOLOR 32 32 32
+        WIDTH 2.5
+      END
+    END #Class
+  END #Layer
+
+  LAYER
+    NAME "grid_tk25vrt"
+    METADATA
+      "wms_title" "Grid TK25vrt"
+    END
+    DATA "ornitho_tk25vrt_3857"
+    STATUS OFF
+    TYPE POLYGON
+    CLASS
+      NAME "tk25vrt"
+      STYLE
+        OUTLINECOLOR 32 32 32
+        WIDTH 3
+      END
+    END #Class
+  END #Layer
+
+  LAYER
+    NAME "birddata"
+    METADATA
+      "wms_title" "Birddata"
+    END
+    TYPE POLYGON
+    PROJECTION
+      "init=epsg:4326"
+    END
+    STATUS OFF
+    CONNECTIONTYPE POSTGIS
+    CONNECTION "host=db port=5432 dbname=regioportal user=regioportal password=xxx"
+    PROCESSING "CLOSE_CONNECTION=DEFER"
+    DATA "geom FROM (SELECT id,maxbzc,geom FROM get_birddata_tk25('%grid%', %sid%, %lid%, '%ts%', '%tp%', '%year%')) AS foo using unique id using srid=4326"
+    VALIDATION
+      'grid' '^[a-z]{2}[0-9]{2}[a-z]{0,3}$'
+      'sid' '^[0-9]{1,6}$'
+      'lid' '^[0-9]{1,6}$'
+      'ts' '^SEASON$|^DECADE$'
+      'tp' '^([0-9]{1,2}+,)+[0-9]{1,2}+$'
+      'year' '^([0-9]{1,4}+,)+[0-9]{1,4}+$'
+    END # VALIDATION
+    CLASS
+    END # Class
+  END # Layer
+
+  LAYER
+    NAME "tk_vorkommen"
+    METADATA
+      "wms_title" "Vorkommen"
+    END
+    TYPE POLYGON
+    PROJECTION
+      "init=epsg:4326"
+    END
+    STATUS OFF
+    CONNECTIONTYPE POSTGIS
+    CONNECTION "host=db port=5432 dbname=regioportal user=regioportal password=xxx"
+    PROCESSING "CLOSE_CONNECTION=DEFER"
+    DATA "geom FROM (SELECT id,geom FROM get_birddata_tk25('%grid%', %sid%, %lid%, '%ts%', '%tp%', '%year%')) AS foo using unique id using srid=4326"
+    VALIDATION
+      'grid' '^[a-z]{2}[0-9]{2}[a-z]{0,3}$'
+      'sid' '^[0-9]{1,6}$'
+      'lid' '^[0-9]{1,6}$'
+      'ts' '^SEASON$|^DECADE$'
+      'tp' '^([0-9]{1,2}+,)+[0-9]{1,2}+$'
+      'year' '^([0-9]{1,4}+,)+[0-9]{1,4}+$'
+    END
+    CLASS
+        STYLE
+          #SYMBOL "circle"
+          #SIZE 30
+          COLOR "#a10334"
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+  END # Layer
+
+  LAYER
+    NAME "tk_brutzeitcode"
+    METADATA
+      "wms_title" "Brutzeitcode"
+    END
+    TYPE POLYGON
+    PROJECTION
+      "init=epsg:4326"
+    END
+    STATUS OFF
+    CONNECTIONTYPE POSTGIS
+    CONNECTION "host=db port=5432 dbname=regioportal user=regioportal password=xxx"
+    PROCESSING "CLOSE_CONNECTION=DEFER"
+    DATA "geom FROM (SELECT id,maxbzc,geom FROM get_birddata_tk25('%grid%', %sid%, %lid%, '%ts%', '%tp%', '%year%')) AS foo using unique id using srid=4326"
+    VALIDATION
+      'grid' '^[a-z]{2}[0-9]{2}[a-z]{0,3}$'
+      'sid' '^[0-9]{1,6}$'
+      'lid' '^[0-9]{1,6}$'
+      'ts' '^SEASON$|^DECADE$'
+      'tp' '^([0-9]{1,2}+,)+[0-9]{1,2}$'
+      'year' '^([0-9]{1,4}+,)+[0-9]{1,4}$'
+    END
+    CLASSITEM "maxbzc"
+    CLASS
+        EXPRESSION ([maxbzc] = 0)
+        STYLE
+          #SYMBOL "circle"
+          #SIZE 30
+          COLOR "#fafafa"
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+    CLASS
+        EXPRESSION ([maxbzc] = 30)
+        STYLE
+          COLOR "#ffff00"
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+    CLASS
+        EXPRESSION ([maxbzc] = 40)
+        STYLE
+          COLOR "#ffa500"
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+    CLASS
+        EXPRESSION ([maxbzc] = 50)
+        STYLE
+          COLOR "#ff0000"
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+  END # Layer
+
+  LAYER
+    NAME "sightings"
+    METADATA
+      "wms_title" "Sightings"
+    END
+    TYPE POLYGON
+    PROJECTION
+      "init=epsg:4326"
+    END
+    STATUS OFF
+    CONNECTIONTYPE POSTGIS
+    CONNECTION "host=db port=5432 dbname=regioportal user=regioportal password=xxx"
+    PROCESSING "CLOSE_CONNECTION=DEFER"
+    DATA "geom FROM (SELECT id,numrec,geom FROM get_sightings_tk25('%grid%', %lid%, '%ts%', '%tp%', '%year%')) AS foo using unique id using srid=4326"
+    VALIDATION
+      'grid' '^[a-z]{2}[0-9]{2}[a-z]{0,3}$'
+      'lid' '^[0-9]{1,6}$'
+      'ts' '^SEASON$|^DECADE$'
+      'tp' '^([0-9]{1,2}+,)+[0-9]{1,2}$'
+      'year' '^([0-9]{1,4}+,)+[0-9]{1,4}$'
+    END
+    COMPOSITE
+      OPACITY 76
+    END
+    CLASSITEM "numrec"
+    CLASS
+        EXPRESSION ([numrec] < 1)
+        STYLE
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+    # ffffcc, a1dab4, 41b6c4, 225ea8
+    CLASS
+        EXPRESSION ([numrec] >= 1 && [numrec] <= 19)
+        STYLE
+          COLOR "#ccccff"
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+    CLASS
+        EXPRESSION ([numrec] >= 20 && [numrec] <= 99)
+        STYLE
+          COLOR "#9999ff"
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+    CLASS
+        EXPRESSION ([numrec] >= 100 && [numrec] <= 500)
+        STYLE
+          COLOR "#6666ff"
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+    CLASS
+        EXPRESSION ([numrec] > 500)
+        STYLE
+          COLOR "#3333ff"
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+  END # Layer
+
+  LAYER
+    NAME "tk_anzahlarten"
+    METADATA
+      "wms_title" "Anzahl_Arten_je_Raster"
+    END
+    TYPE POLYGON
+    PROJECTION
+      "init=epsg:4326"
+    END
+    STATUS OFF
+    CONNECTIONTYPE POSTGIS
+    CONNECTION "host=db port=5432 dbname=regioportal user=regioportal password=xxx"
+    PROCESSING "CLOSE_CONNECTION=DEFER"
+    DATA "geom FROM (SELECT id,numrec,geom FROM get_birdspecies_tk25('%grid%', %lid%, '%ts%', '%tp%', '%year%')) AS foo using unique id using srid=4326"
+    VALIDATION
+      'grid' '^[a-z]{2}[0-9]{2}[a-z]{0,3}$'
+      'lid' '^[0-9]{1,6}$'
+      'ts' '^SEASON$|^DECADE$'
+      'tp' '^([0-9]{1,2}+,)+[0-9]{1,2}$'
+      'year' '^([0-9]{1,4}+,)+[0-9]{1,4}$'
+    END
+    CLASSITEM "numrec"
+    CLASS
+        EXPRESSION ([numrec] < 1)
+        STYLE
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+    CLASS
+        EXPRESSION ([numrec] >= 1 && [numrec] <= 49)
+        STYLE
+          COLOR "#feebe2"
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+    CLASS
+        EXPRESSION ([numrec] >= 50 && [numrec] <= 99)
+        STYLE
+          COLOR "#fbb4b9"
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+    CLASS
+        EXPRESSION ([numrec] >= 100 && [numrec] <= 200)
+        STYLE
+          COLOR "#f768a1"
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+    CLASS
+        EXPRESSION ([numrec] > 200)
+        STYLE
+          COLOR "#ae017e"
+          OUTLINECOLOR 0 0 0
+          WIDTH 1
+        END
+    END # Class
+  END # Layer
+
+END
