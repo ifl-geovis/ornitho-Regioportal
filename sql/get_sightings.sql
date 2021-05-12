@@ -30,9 +30,9 @@ stmt = format('WITH query1 as (
   Where
 	ref_govlevel.govlevel_id=$1
 	and
-	ST_Intersects(ST_Envelope(geom), tk.grid_geom)
+	ST_Intersects(geom, tk.grid_geom)
+  --ST_Intersects(ST_Envelope(geom), tk.grid_geom)
   --ST_Contains(ST_MakeEnvelope(bbox[3], bbox[4], bbox[1], bbox[2], 4326), tk.grid_geom)--
-
 ),
 query2 as (
    Select
@@ -48,6 +48,7 @@ query2 as (
   group by tk25_id
 )
 SELECT CAST(row_number() over () AS int) as id, a.numrec, b.grid_geom from query2 a RIGHT JOIN query1 b ON (a.tk25_id = b.tk25_id)', concat('ref_',tbl), concat('sightings_',tbl));
+--RIGHT JOIN: returns all rows from the right table, even if there are no matches in the left table
 
 --RAISE NOTICE '%' , stmt;
 

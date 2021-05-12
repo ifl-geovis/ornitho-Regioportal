@@ -37,12 +37,21 @@ query3 as (
   ) AS feature
   FROM (Select govlevel_id as id, name as text, bbox as value, hmf from ref_govlevel where category in (val[3]) and name ilike '%' || qstr || '%' order by name) row
 ),
+query4 as (
+  SELECT jsonb_build_object(
+    'text', val[4],
+    'children', jsonb_agg(row)
+  ) AS feature
+  FROM (Select govlevel_id as id, name as text, bbox as value, hmf from ref_govlevel where category in (val[4]) and name ilike '%' || qstr || '%' order by name) row
+),
 ctable as (
     select 1,feature from query1
         union
     select 2,feature from query2
         union
     select 3,feature from query3
+        union
+    select 4,feature from query4
 	order by 1
 )
 SELECT jsonb_build_object(

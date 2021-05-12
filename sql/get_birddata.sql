@@ -31,7 +31,7 @@ stmt = format('WITH query1 as (
   Where
 	ref_govlevel.govlevel_id=$1
 	and
-	ST_Intersects(ST_Envelope(geom), tk.grid_geom)
+	ST_Intersects(geom, tk.grid_geom)
 ),
 query2 as (
    Select
@@ -49,6 +49,7 @@ query2 as (
   group by tk25_id
 )
 SELECT CAST(row_number() over () AS int) as id, a.maxbzc, b.circle_geom from query2 a INNER JOIN query1 b ON (a.tk25_id = b.tk25_id)', concat('ref_',tbl), concat('birddata_',tbl));
+--INNER JOIN: returns rows when there is a match in both tables
 
 --RAISE NOTICE '%' , stmt;
 

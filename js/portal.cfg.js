@@ -168,7 +168,7 @@ var layersObject = {
   dwd: {
     url: "https://cdc.dwd.de/geoserver/CDC/wms",
     name: {
-      temp: "GRD_DEU_P30Y_TM_P1Y",
+      temp: "GRD_DEU_P30Y_T2M_M_P1Y",
       prec: "GRD_DEU_P30Y_RR_P1Y"
     },
     attr: "&copy; Deutscher Wetterdienst / DWD"
