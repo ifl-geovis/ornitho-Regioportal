@@ -1,0 +1,198 @@
+/* rem is default value of 16px
+rem is based on the font-size of the :root node,
+make the apparent size of 1rem equal to 10px - for that is 10/16 which is 0.625, or 62.5%. */
+:root {
+  height: 100%;
+  font-size: 62.5%;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Body font size 16px */
+  font-size: 1.6rem;
+  background-color: transparent;
+}
+
+h2 {
+  display: inline-block;
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: .5rem;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 10000; /* Sit on top */
+  padding-top: 18px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  font-size: 1.2rem;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#infoMsg {
+  /* display: none; */
+  font-size: 1.6rem;
+  color: #404040;
+  background-color: #fefefe;
+  border: 0.1rem solid;
+  white-space: nowrap;
+  position: absolute;
+  padding: .75rem 1.25rem;
+  /*left: 20.5rem;*/
+}
+
+#infoMsg span::before {
+  content: "\A";
+  white-space: pre;
+}
+
+.infoTxt {
+  font-size: 1.2rem;
+  color: #404040;
+}
+
+.container{
+  clear:both;
+  overflow:auto;
+}
+
+.map-container { 
+  position: relative; 
+}
+
+#map {
+  /* Margin top by nav height */
+  /*margin-top: 9.4rem;*/
+  min-height: calc(100vh - 1.8rem);
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+/*#logo {
+  display: table-cell;
+  filter: invert(100%);
+  padding: 0.8rem 3.4rem 0.2rem 0.8rem;
+  vertical-align: middle;
+}*/
+/*.logo img{float:left;} */
+
+#loader {
+  position: absolute;
+  border: 0.1rem solid;
+  border-radius: 0.25rem;
+  width: 20rem;
+  height: 1.5rem;
+  top: 50%;
+  left: 50%;
+  margin: -0.75rem 0 0 -10rem;
+  z-index: 1003;
+}
+
+.circle {
+  position: relative;
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  float: left;
+}
+
+.small {
+  padding-left: 0.1rem;
+  font-size: 0.95rem;
+}
+
+.leaflet-top.leaflet-right .leaflet-control-layers:nth-child(1) .leaflet-control-layers-toggle {
+  background-image: url("../../img/layers_icon.png");
+  /*background-color: #e9da89; */
+  width: 5rem;
+  height: 5rem;
+}
+
+.leaflet-bottom.leaflet-right .leaflet-bar:nth-child(1) .leaflet-control-zoom-max {
+  background-image: url("../../img/globe_icon.png");
+}
+
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+  font-size: 1.3rem;
+  width: 13rem;
+}
+
+.leaflet-legend {
+  line-height: 1.8rem;
+  padding: 0.5rem;
+  background: rgb(255, 255, 255);
+  /*color: #555;*/
+  /* width: 18rem; */
+  border: 0.1rem solid;
+  /*border-color: #555;*/
+  margin-top: 80px !important;
+}
+
+.leaflet-legend i {
+  width: 1.8rem;
+  height: 1.8rem;
+  float: left;
+  margin-right: 0.8rem;
+  opacity: 0.7;
+}
+
+.legend-link{
+  background: rgb(255, 255, 255);
+}
+
+.leaflet-legend-vorkommen .fillbrown {
+  background: #a10334;
+}
+
+.leaflet-control-scale {
+  margin-left: 1rem !important;
+  display: inline-block;
+  float: none;
+  vertical-align: bottom;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.leaflet-bottom .leaflet-control {
+  /* margin-left: 1rem !important; */
+  margin-bottom: 0.5rem !important;
+}
+
+.hiding{ display: none; }
+.showing_f{ display: flex; }
+.showing_b{ display: block; }
+
+.white {
+  color: #FFFFFF;
+}
