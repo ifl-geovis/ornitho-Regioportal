@@ -269,6 +269,9 @@ map.on("movestart zoomstart", function() {
   infoObject.grid_start = queryObject.grid;
 });
 
+// map.on('moveend', function() { 
+//      console.log(map.getBounds());});
+
 // define TK-Grid depending on zoomlevel
 map.on("zoomend", function() {
 
