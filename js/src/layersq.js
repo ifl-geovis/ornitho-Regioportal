@@ -78,12 +78,12 @@ var sightings = L.WMS.overlay(layersObject.mapserver.url, {
 
 // wait for loading the data by mapserver
 (async () => {
-  startSearchDB();
-  await delay(2000);
+  infoMessage.setContent(formatInfoMessage());
   district.addTo(map);
   vorkommen.addTo(map);
   sightings.addTo(map);
-  setGridLayers(queryObject.grid);
+  //await delay(1000);
+  getDataOnZoom(map.getMinZoom());
 })();
 
 /* create leaflet layercontrol panel*/
@@ -101,7 +101,8 @@ var overlayMaps = {
   "Meldeaktivität": sightings
 };
 
-var layerControl = L.control.layers(baseMaps, overlayMaps, {collapsed:false}).addTo(map);
+//baseMaps, overlayMaps, {collapsed:false}
+var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
 // insert header at top of layer control
 $("<h2>Kartengrundlage</h2>").insertBefore("div.leaflet-control-layers-base");
 
@@ -172,8 +173,19 @@ map.on("overlayremove", function(eventLayer) {
 
 // define TK-Grid depending on zoomlevel
 map.on("zoomend", function() {
-
+  console.log("zoomend");
   var zoomLevel = map.getZoom();
+
+  getDataOnZoom(zoomLevel);
+
+}); //End zoomend event
+
+
+/* getDataOnZoom()
+ * 
+ *
+ */
+function getDataOnZoom(zoomLevel) {
 
   switch (true) {
     //tk25
@@ -220,7 +232,7 @@ map.on("zoomend", function() {
 
   } //End switch
 
-}); //End zoomend event
+}; // End getDataOnZoom
 
 
 /* setGridLayers()
@@ -247,7 +259,7 @@ function setGridLayers(gridLevel) {
       $(".leaflet-control-layers-overlays > label:nth-child(1)").css("display", "none");
       $(".leaflet-control-layers-overlays > label:nth-child(2)").css("display", "none");
       $(".leaflet-control-layers-overlays > label:nth-child(3)").css("display", "none");
-
+console.log("tk50");
       break;
 
     case "tk25":

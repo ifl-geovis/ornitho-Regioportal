@@ -1,9 +1,8 @@
 //queryObject with default values
 var queryObject = {
-  "grid": "tk50",
+  "grid": "tk",
   "sid": 0, //species_id
   "lid": 2000, //govlevel_id, 2000 = Germany
-  "bbox": [0,0,0,0], //boundingbox location 
   "ts": "SEASON", //time_split
   "tp": [0,0], //time_point, 0 = ganzjährig
   "year": [0,0] //from - to years
@@ -13,9 +12,10 @@ var queryObject = {
 var infoObject = {
   "species_name": "",
   "species_prot": "", //sensible Art?
-  "season_select": "Januar-Dezember",
   "location_name": "",
   "season_select": "Januar-Dezember", //ganzjährig
+  "bbox": [0,0,0,0], //boundingbox location 
+  "tkmax": "tk50",
   "hmf": 0 //hmf data available?
 };
 

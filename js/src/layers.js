@@ -449,7 +449,7 @@ function setBirdLayers(layerId) {
 
   if (layerId == "NON") {
     map.removeLayer(birddata);
-
+    
     if ($(".leaflet-legend").children(":visible").length == 0) {
       $(".leaflet-legend").hide();
     }
@@ -464,7 +464,7 @@ function setBirdLayers(layerId) {
         "sld": layersObject.mapserver.sld + birdlayerConf.sld
       });
     }
-
+    
     if ($(".leaflet-legend").children(":visible").length == 0) {
       $(".leaflet-legend").show();
     }

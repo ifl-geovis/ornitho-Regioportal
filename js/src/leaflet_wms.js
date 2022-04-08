@@ -171,6 +171,7 @@ wms.Overlay = L.Layer.extend({
     'options': {
         'crs': null,
         'uppercase': false,
+        'updateWhenIdle': true,
         'attribution': '',
         'opacity': 1
     },
@@ -220,6 +221,13 @@ wms.Overlay = L.Layer.extend({
         };
     },
 
+    'getLoading': function(layer,status) {
+        if (['tk_vorkommen','tk_brutzeitcode','birddata'].includes(layer)){
+            //show or hide loading animation gif
+            (status == "start") ? $('.loading').show() : $('.loading').hide(); 
+        }
+    },
+
     'update': function() {
         if (!this._map) {
             return;
@@ -232,14 +240,18 @@ wms.Overlay = L.Layer.extend({
         }
         this._currentUrl = url;
 
+        //console.log('update');
+        //start of loading tiles 
+        this.getLoading(this.wmsParams.layers,'start');
+
         // Keep current image overlay in place until new one loads
         // (inspired by esri.leaflet)
         var bounds = this._map.getBounds();
         var opt= {'opacity': 0};
 
         //enable pane option
-		    if (this.options.pane)
-			     opt.pane=this.options.pane;
+	    if (this.options.pane)
+		     opt.pane=this.options.pane;
 
         var overlay = L.imageOverlay(url, bounds, opt);
 
@@ -259,6 +271,8 @@ wms.Overlay = L.Layer.extend({
             overlay.setOpacity(
                 this.options.opacity ? this.options.opacity : 1
             );
+            //all tiles are loaded
+            this.getLoading(this.wmsParams.layers,'end');
         }
         if ((this._map.getZoom() < this.options.minZoom) ||
             (this._map.getZoom() > this.options.maxZoom)){

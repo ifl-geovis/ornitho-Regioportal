@@ -41,12 +41,12 @@ function formatInfoMessage() {
     year_select = checkYear(year_from, year_to);
   }
 
-  datetxt = infoObject.location_name + ", " + season_select + " " + year_select;;
+  datetxt = infoObject.location_name + ", " + season_select + " " + year_select;
 
   var speciestxt = infoObject.species_name + infoObject.species_prot + ", ";
   var infotxt = (infoObject.species_prot !== "") ? "<span class='infoTxt'>(Aus Schutzgründen nur begrenzter Zoom möglich)</span>" : "";
 
-  return speciestxt + datetxt + infotxt;
+  return "<span class='speciesTxt'>"+speciestxt + "<b>"+datetxt+"</b></span>" + infotxt;
 
 };
 
@@ -56,7 +56,6 @@ function formatInfoMessage() {
 function startSearchDB() {
 
   console.log(queryObject);
-  infoMessage.setContent(formatInfoMessage());
   vorkommen.setParams(queryObject);
   brutstatus.setParams(queryObject);
   sightings.setParams(queryObject);
@@ -67,10 +66,10 @@ function startSearchDB() {
 /* create Leaflet map object and their controls
  *
  */
-var bbox = queryObject.bbox;
+var bbox = infoObject.bbox;
 var southWest = L.latLng(bbox[3], bbox[2]),
     northEast = L.latLng(bbox[1], bbox[0]);
-    district_bounds = L.latLngBounds(southWest, northEast);
+    district_bounds = L.latLngBounds(southWest, northEast).pad(0.2);
 
 // map object
 var map = L.map('map', {
@@ -86,11 +85,12 @@ var map = L.map('map', {
   attributionControl: false
 });
 
-if (queryObject.grid == "tk50") {
+//handling Zoomlevel
+if (infoObject.tkmax == "tk50") {
     infoObject.species_prot = " (sensible Art)";
     // restrict zoom to tk50-level
     map.setMaxZoom(7.5);
-  } else if (queryObject.grid == "tk25") {
+  } else if (infoObject.tkmax == "tk25") {
     infoObject.species_prot = " (sensible Art)";
     // restrict zoom to tk25-level
     map.setMaxZoom(9.5);
@@ -100,14 +100,13 @@ if (queryObject.grid == "tk50") {
     (infoObject.hmf == 1) ? map.setMaxZoom(14): map.setMaxZoom(11.5);
 }
 
-map.fitBounds(district_bounds, {
-  padding: [50, 50],
-  maxZoom: map.getMaxZoom()
-});
-// map.doubleClickZoom.disable();
-map.setMinZoom(map.getBoundsZoom(district_bounds));   
+map.fitBounds(district_bounds);
+map.setMinZoom(map.getBoundsZoom(district_bounds));
+map.doubleClickZoom.disable(); 
 
-// infoMessage control
+/* infoMessage control
+*
+*/
 var infoMessage = L.Control.extend({
   options: {
     position: "topleft"
@@ -131,7 +130,9 @@ var infoMessage = new infoMessage().addTo(map);
 //   imperial: false
 // }).addTo(map);
 
-// legend control
+/* legend control
+*
+*/
 var legendLink = L.Control.extend({
   options: {
     position: "bottomleft"
@@ -168,23 +169,27 @@ var legendLink = L.Control.extend({
 map.addControl(new legendLink());
 
 
-// zoom control
+/* zoom control
+*
+*/
 L.control.zoom({
   position: "bottomright"
 }).addTo(map);
 
 
-// maxZoomButton control
+/* maxZoomButton control
+*
+*/
 var maxZoomButton = L.Control.extend({
   options: {
     position: "bottomright"
   },
   onAdd: function(map) {
-    var container = L.DomUtil.create("div", "leaflet-bar leaflet-control leaflet-control-custom");
+    var container = L.DomUtil.create("div", "leaflet-bar leaflet-control leaflet-custom-maxzoom");
 
-    var button = L.DomUtil.create("a", "leaflet-control-zoom-max");
+    var button = L.DomUtil.create("a", "leaflet-control-maxzoom");
     button.href = "#";
-    button.title = "Zoom auf Auswahl";
+    button.title = "Zoom auf Region";
 
     container.onclick = function() {
         map.fitBounds(district_bounds);
@@ -196,6 +201,15 @@ var maxZoomButton = L.Control.extend({
 });
 map.addControl(new maxZoomButton());
 
+/* fullscreen control
+*
+*/
+L.control.fullscreen({
+  position: 'bottomright', // topleft, topright, bottomright or bottomleft
+  title: 'Anzeige im Vollbild',
+  titleCancel: 'Vollbild-Modus beenden',
+  forceSeparateButton: true,
+}).addTo(map);
 
 /* set Leaflet legend panel
  * 225ea8,41b6c4,a1dab4,ffffcc
@@ -292,9 +306,3 @@ var mapLegend = L.Control.extend({
 });
 map.addControl(new mapLegend());
 //var mapLegendm = new mapLegend();
-
-
-// hide the loading symbol
-// $(document).one("ajaxStop", function() {
-//   $("#loader").hide();
-// });

@@ -229,16 +229,23 @@ h2 {
   position: relative;
 }
 
-#loader {
-  position: absolute;
+.loading {
+  /*display: none;*/
+  position: absolute;  
   border: 0.1rem solid;
-  border-radius: 0.25rem;
-  width: 20rem;
-  height: 1.5rem;
-  top: 50%;
-  left: 50%;
-  margin: -0.75rem 0 0 -10rem;
-  z-index: 1003;
+  border-radius: 1rem;
+  width: 5rem;
+  height: 5rem;
+  top: 48%;
+  left: 48%;
+  opacity: 0.9;
+  background-color: #fff;
+  z-index: 10000;
+}
+
+#loading-image {
+  z-index: 10001;
+  margin: 0.9rem 0 0 0.9rem;
 }
 
 #startModal{

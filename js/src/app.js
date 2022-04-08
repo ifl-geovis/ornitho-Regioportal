@@ -98,7 +98,7 @@ function formatInfoMessage() {
  */
 function startSearchDB() {
 
-  //console.log(queryObject);
+  console.log(queryObject);
   infoMessage.setContent(formatInfoMessage());
   birddata.setParams(queryObject);
   sightings.setParams(queryObject);
@@ -268,6 +268,7 @@ $(document).ready(function() {
 
     if (!map.hasLayer(birddata)) {
       $("#layer-input").val("VOR").trigger("change");
+      $("#layer-input").prop('disabled', false);
       setBirdLayers("VOR");
     }
   });
@@ -277,6 +278,7 @@ $(document).ready(function() {
     infoObject.species_prot = "";
     (infoObject.hmf == 1) ? map.setMaxZoom(14): map.setMaxZoom(11.5);
     $("#layer-input").val("NON").trigger("change");
+    $("#layer-input").prop('disabled', true);
     setBirdLayers("NON");
   });
 
@@ -668,6 +670,6 @@ map.addControl(new mapLegend());
 
 
 // hide the loading symbol
-$(document).one("ajaxStop", function() {
-  $("#loader").hide();
-});
+// $(document).one("ajaxStop", function() {
+//   $("#loader").hide();
+// });

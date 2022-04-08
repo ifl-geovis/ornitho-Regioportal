@@ -170,9 +170,9 @@ if(!array_key_exists('state', $_SESSION)){
   </div>
 </div>
 
-<!-- Show loading progress -->
-<div class="progress" id="loader">
-  <div class="progress-bar progress-bar-striped progress-bar-animated w-100"></div>
+<!-- show loading progress -->
+<div class="loading">
+  <img id="loading-image" src="img/leaflet_loader.gif" alt="Loading..." />  
 </div>
 
 <!-- Initialize the info field -->
